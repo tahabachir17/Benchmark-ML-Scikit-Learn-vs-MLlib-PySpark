@@ -1,0 +1,19 @@
+{
+  "spark_version":"3.5.3",
+  "master":"spark:\/\/master:7077",
+  "execution_mode":"standalone\/remote (verify worker hosts)",
+  "memory_scope":"driver process tree RSS only; remote executors excluded",
+  "run_label":"docker-single-host",
+  "split_method":"source-grouped 80\/20 before replication, seed 42",
+  "synthetic_scaling":true,
+  "default_parallelism":2,
+  "python":"3.8.10",
+  "sklearn_version":"1.3.2",
+  "sklearn_n_jobs":4,
+  "cpu":"x86_64",
+  "logical_cores":8,
+  "ram_gb":7.6,
+  "os":"Linux 6.18.40.1-microsoft-standard-WSL2",
+  "repeats":3,
+  "date":"2026-11-19 20:06"
+}

@@ -228,10 +228,21 @@ def analysis(summ, df):
         name = MODEL_NAME[m]
         if len(wins):
             f = wins.iloc[0]
-            out.append((name, f"Premier volume testé où Spark est plus rapide que scikit-learn : ~"
-                              f"{fmt_int(f.n_train)} lignes d'entraînement (x{f.scale}), avec "
-                              f"{f.best_p} partitions ({f.sp_fit:.2f}s contre {f.sk_fit:.2f}s, "
-                              f"soit {1 / f.ratio:.1f}x plus rapide)."))
+            body = (f"premier volume testé où le fit Spark est plus rapide que scikit-learn : ~"
+                    f"{fmt_int(f.n_train)} lignes d'entraînement (x{f.scale}), avec "
+                    f"{f.best_p} partitions ({f.sp_fit:.2f}s contre {f.sk_fit:.2f}s, "
+                    f"soit {1 / f.ratio:.1f}x plus rapide).")
+            g_s = df[(df.model == m) & (df.scale == f.scale)]
+            sk_tot = g_s[g_s.framework == "sklearn"].total_time_s.iloc[0]
+            sp_tot = g_s[g_s.framework == "spark"].total_time_s.min()
+            if sp_tot < sk_tot:
+                body += (f" En temps total (lecture + préparation + fit + prédiction), Spark est "
+                         f"aussi plus rapide ({sp_tot:.2f}s contre {sk_tot:.2f}s).")
+            else:
+                body += (f" En temps total (lecture + préparation + fit + prédiction), Spark reste "
+                         f"{sp_tot / sk_tot:.2f}x plus lent ({sp_tot:.2f}s contre {sk_tot:.2f}s) : "
+                         f"le basculement n'est atteint que sur l'entraînement.")
+            out.append((name, body))
             continue
         last = g.iloc[-1]
         body = (f"aucun basculement dans la plage testée. Au plus grand volume "
@@ -280,7 +291,7 @@ def draw_local_vs_cluster(local, cluster, models):
                         label=f"Spark {label} (meilleur p)", markersize=4)
             ax.set_xscale("log"); ax.set_yscale("log"); ax.set_title(MODEL_NAME[m])
             ax.set_xlabel("Lignes d'entraînement"); ax.set_ylabel("Temps d'entraînement (s)")
-        axes[0].legend(fontsize=6)
+        axes[-1].legend(fontsize=6, loc="upper left")  # RF panel: empty top-left corner
     return draw
 
 
@@ -347,12 +358,12 @@ def add_cluster_section(doc, local, cluster_csv, models, usable, local_env):
     for title, body in findings:
         doc.para(title, bold=True, bullet=True)
         doc.para(body, indent=0.15)
-    doc.charts(len(models), 2.7, draw_local_vs_cluster(local, cluster, models))
+    doc.charts(len(models), 2.45, draw_local_vs_cluster(local, cluster, models))
     doc.para("Échelles log-log. Bleu : Spark local[*] ; vert : Spark cluster Docker ; orange plein / "
              "pointillé : scikit-learn local / dans le conteneur.", size=7, color=INK2)
     doc.table([["Modèle", "Éch.", "sk local (s)", "Spark local (s)", "sk Docker (s)",
                 "Spark cluster (s)", "Cluster/sk", "Cluster/local"]] + rows,
-              [0.55, 0.5, 0.8, 1.1, 0.85, 1.15, 0.8, 0.85], size=6.5)
+              [0.55, 0.5, 0.8, 1.1, 0.85, 1.15, 0.8, 0.85], size=6.5, row_h=0.19)
     doc.para("Temps de fit, médianes. Cluster/sk = Spark cluster / scikit-learn Docker (même machine "
              "virtuelle, mêmes 4 cœurs) ; Cluster/local = Spark cluster / Spark local[*]. "
              "Les versions Python / scikit-learn diffèrent entre Windows et le conteneur : comparer "

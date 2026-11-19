@@ -73,11 +73,17 @@ def _completed_stages(spark: SparkSession) -> dict:
     """Completed stages from the Spark REST API: {stage_id: (shuffle_read, shuffle_write)}."""
     sc = spark.sparkContext
     url = f"{sc.uiWebUrl}/api/v1/applications/{sc.applicationId}/stages?status=complete"
-    try:
-        with urllib.request.urlopen(url, timeout=5) as r:
-            stages = json.load(r)
-    except Exception as exc:
-        raise RuntimeError("Spark shuffle metrics unavailable; check the Spark UI REST API") from exc
+    last_exc = None
+    for attempt in range(5):  # the UI can be slow right after start-up on a cluster
+        try:
+            with urllib.request.urlopen(url, timeout=30) as r:
+                stages = json.load(r)
+            break
+        except Exception as exc:
+            last_exc = exc
+            time.sleep(2 * (attempt + 1))
+    else:
+        raise RuntimeError("Spark shuffle metrics unavailable; check the Spark UI REST API") from last_exc
     return {(s["stageId"], s["attemptId"]): (s.get("shuffleReadBytes", 0),
                                              s.get("shuffleWriteBytes", 0)) for s in stages}
 

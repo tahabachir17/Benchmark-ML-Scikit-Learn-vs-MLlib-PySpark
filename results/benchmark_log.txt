@@ -68,3 +68,7 @@
   spark   lr x2000 p=32  fit=   9.73s inf=  1.42s R2=0.8048 RMSE=   5993.4 mem=   3018MB shuffleW= 129.07MB
   spark   rf x2000 p=2   fit=  51.17s inf=  3.93s R2=0.8704 RMSE=   4883.6 mem=   4119MB shuffleW= 129.57MB
   spark   rf x2000 p=8   fit=  33.83s inf=  2.59s R2=0.8709 RMSE=   4875.1 mem=   5417MB shuffleW= 132.18MB
+  spark   rf x2000 p=16  fit=  44.56s inf=  3.27s R2=0.8710 RMSE=   4872.6 mem=   4360MB shuffleW= 136.40MB
+  spark   rf x2000 p=32  fit=  50.12s inf=  4.19s R2=0.8708 RMSE=   4875.7 mem=   4574MB shuffleW= 147.09MB
+
+Results written to D:\Projects\Benchmark ML ScikitLearn vs MLlib\results\benchmark_results.csv

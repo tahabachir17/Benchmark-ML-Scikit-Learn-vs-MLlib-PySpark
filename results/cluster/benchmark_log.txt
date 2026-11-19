@@ -1,0 +1,69 @@
+ Container benchmarkmlscikitlearnvsmllib-worker-2-1 Running 
+ Container benchmarkmlscikitlearnvsmllib-master-1 Running 
+ Container benchmarkmlscikitlearnvsmllib-worker-1-1 Running 
+ Container benchmarkmlscikitlearnvsmllib-benchmark-run-a8d5267ead0b Creating 
+ Container benchmarkmlscikitlearnvsmllib-benchmark-run-a8d5267ead0b Created 
+== scikit-learn (mono-noeud) ==
+  sklearn lr x1    p=1   fit=   0.01s inf=  0.01s R2=0.8069 RMSE=   5956.3 mem=    141MB shuffleW=   0.00MB
+  sklearn rf x1    p=1   fit=   0.13s inf=  0.04s R2=0.8983 RMSE=   4322.2 mem=    141MB shuffleW=   0.00MB
+  sklearn lr x10   p=1   fit=   0.03s inf=  0.01s R2=0.8047 RMSE=   5987.2 mem=    147MB shuffleW=   0.00MB
+  sklearn rf x10   p=1   fit=   0.21s inf=  0.04s R2=0.8937 RMSE=   4415.9 mem=    150MB shuffleW=   0.00MB
+  sklearn lr x50   p=1   fit=   0.12s inf=  0.03s R2=0.8050 RMSE=   5991.7 mem=    187MB shuffleW=   0.00MB
+  sklearn rf x50   p=1   fit=   0.83s inf=  0.05s R2=0.8915 RMSE=   4469.6 mem=    195MB shuffleW=   0.00MB
+  sklearn lr x200  p=1   fit=   0.32s inf=  0.07s R2=0.8046 RMSE=   6001.1 mem=    278MB shuffleW=   0.00MB
+  sklearn rf x200  p=1   fit=   3.00s inf=  0.09s R2=0.8925 RMSE=   4451.9 mem=    295MB shuffleW=   0.00MB
+  sklearn lr x500  p=1   fit=   0.83s inf=  0.14s R2=0.8045 RMSE=   6000.8 mem=    517MB shuffleW=   0.00MB
+  sklearn rf x500  p=1   fit=   9.17s inf=  0.17s R2=0.8893 RMSE=   4514.8 mem=    492MB shuffleW=   0.00MB
+  sklearn lr x1000 p=1   fit=   1.69s inf=  0.29s R2=0.8048 RMSE=   5995.5 mem=    840MB shuffleW=   0.00MB
+  sklearn rf x1000 p=1   fit=  17.40s inf=  0.30s R2=0.8903 RMSE=   4494.5 mem=    869MB shuffleW=   0.00MB
+== PySpark MLlib (spark://master:7077) ==
+  spark   lr x1    p=2   fit=   3.29s inf=  0.89s R2=0.8069 RMSE=   5956.3 mem=   1440MB shuffleW=   0.07MB
+  spark   lr x1    p=8   fit=   3.75s inf=  0.80s R2=0.8069 RMSE=   5956.3 mem=   1547MB shuffleW=   0.11MB
+  spark   lr x1    p=16  fit=   3.86s inf=  0.77s R2=0.8069 RMSE=   5956.3 mem=   1565MB shuffleW=   0.16MB
+  spark   lr x1    p=32  fit=   4.29s inf=  0.91s R2=0.8069 RMSE=   5956.3 mem=   1619MB shuffleW=   0.24MB
+  spark   rf x1    p=2   fit=   2.90s inf=  0.69s R2=0.8820 RMSE=   4657.0 mem=   1703MB shuffleW=   0.61MB
+  spark   rf x1    p=8   fit=   3.54s inf=  0.52s R2=0.8818 RMSE=   4660.9 mem=   1747MB shuffleW=   1.83MB
+  spark   rf x1    p=16  fit=   4.89s inf=  0.59s R2=0.8820 RMSE=   4656.4 mem=   1785MB shuffleW=   3.85MB
+  spark   rf x1    p=32  fit=   7.04s inf=  0.85s R2=0.8783 RMSE=   4728.7 mem=   1839MB shuffleW=   9.88MB
+  spark   lr x10   p=2   fit=   1.19s inf=  0.44s R2=0.8047 RMSE=   5987.2 mem=   1874MB shuffleW=   0.65MB
+  spark   lr x10   p=8   fit=   1.58s inf=  0.42s R2=0.8047 RMSE=   5987.2 mem=   1871MB shuffleW=   0.69MB
+  spark   lr x10   p=16  fit=   2.08s inf=  0.56s R2=0.8047 RMSE=   5987.2 mem=   1898MB shuffleW=   0.74MB
+  spark   lr x10   p=32  fit=   3.34s inf=  0.74s R2=0.8047 RMSE=   5987.2 mem=   1913MB shuffleW=   0.84MB
+  spark   rf x10   p=2   fit=   1.82s inf=  0.38s R2=0.8720 RMSE=   4846.2 mem=   1953MB shuffleW=   1.39MB
+  spark   rf x10   p=8   fit=   2.71s inf=  0.37s R2=0.8707 RMSE=   4870.6 mem=   1980MB shuffleW=   3.51MB
+  spark   rf x10   p=16  fit=   4.07s inf=  0.44s R2=0.8722 RMSE=   4842.3 mem=   2017MB shuffleW=   6.78MB
+  spark   rf x10   p=32  fit=   6.69s inf=  0.63s R2=0.8717 RMSE=   4852.3 mem=   2049MB shuffleW=  14.70MB
+  spark   lr x50   p=2   fit=   1.42s inf=  0.32s R2=0.8050 RMSE=   5991.7 mem=   2070MB shuffleW=   3.23MB
+  spark   lr x50   p=8   fit=   1.86s inf=  0.52s R2=0.8050 RMSE=   5991.7 mem=   2109MB shuffleW=   3.27MB
+  spark   lr x50   p=16  fit=   2.30s inf=  0.48s R2=0.8050 RMSE=   5991.7 mem=   2145MB shuffleW=   3.33MB
+  spark   lr x50   p=32  fit=   3.02s inf=  0.59s R2=0.8050 RMSE=   5991.7 mem=   2178MB shuffleW=   3.42MB
+  spark   rf x50   p=2   fit=   3.19s inf=  0.47s R2=0.8696 RMSE=   4900.8 mem=   2209MB shuffleW=   4.01MB
+  spark   rf x50   p=8   fit=   4.06s inf=  0.44s R2=0.8692 RMSE=   4908.4 mem=   2250MB shuffleW=   6.43MB
+  spark   rf x50   p=16  fit=   5.10s inf=  0.58s R2=0.8705 RMSE=   4883.3 mem=   2273MB shuffleW=  10.25MB
+  spark   rf x50   p=32  fit=   7.66s inf=  0.70s R2=0.8701 RMSE=   4890.4 mem=   2306MB shuffleW=  19.86MB
+  spark   lr x200  p=2   fit=   2.62s inf=  0.49s R2=0.8046 RMSE=   6001.1 mem=   2340MB shuffleW=  12.89MB
+  spark   lr x200  p=8   fit=   2.77s inf=  0.50s R2=0.8046 RMSE=   6001.1 mem=   2354MB shuffleW=  12.96MB
+  spark   lr x200  p=16  fit=   3.31s inf=  0.54s R2=0.8046 RMSE=   6001.1 mem=   2409MB shuffleW=  13.02MB
+  spark   lr x200  p=32  fit=   3.82s inf=  0.63s R2=0.8046 RMSE=   6001.1 mem=   2414MB shuffleW=  13.17MB
+  spark   rf x200  p=2   fit=   7.56s inf=  0.70s R2=0.8699 RMSE=   4897.2 mem=   2415MB shuffleW=  13.69MB
+  spark   rf x200  p=8   fit=   7.70s inf=  0.67s R2=0.8703 RMSE=   4889.1 mem=   2472MB shuffleW=  16.22MB
+  spark   rf x200  p=16  fit=   7.96s inf=  0.69s R2=0.8700 RMSE=   4894.4 mem=   2484MB shuffleW=  20.27MB
+  spark   rf x200  p=32  fit=  10.10s inf=  0.86s R2=0.8706 RMSE=   4884.8 mem=   2516MB shuffleW=  30.66MB
+  spark   lr x500  p=2   fit=   4.68s inf=  0.74s R2=0.8045 RMSE=   6000.8 mem=   2543MB shuffleW=  32.19MB
+  spark   lr x500  p=8   fit=   5.13s inf=  0.80s R2=0.8045 RMSE=   6000.8 mem=   2546MB shuffleW=  32.25MB
+  spark   lr x500  p=16  fit=   5.08s inf=  0.82s R2=0.8045 RMSE=   6000.8 mem=   2588MB shuffleW=  32.32MB
+  spark   lr x500  p=32  fit=   5.33s inf=  0.83s R2=0.8045 RMSE=   6000.8 mem=   2591MB shuffleW=  32.46MB
+  spark   rf x500  p=2   fit=  15.44s inf=  1.35s R2=0.8707 RMSE=   4879.1 mem=   2627MB shuffleW=  33.00MB
+  spark   rf x500  p=8   fit=  12.72s inf=  1.06s R2=0.8708 RMSE=   4877.6 mem=   2662MB shuffleW=  35.54MB
+  spark   rf x500  p=16  fit=  14.08s inf=  1.11s R2=0.8703 RMSE=   4888.2 mem=   2678MB shuffleW=  39.67MB
+  spark   rf x500  p=32  fit=  15.65s inf=  1.34s R2=0.8705 RMSE=   4883.1 mem=   2696MB shuffleW=  50.26MB
+  spark   lr x1000 p=2   fit=   7.98s inf=  1.23s R2=0.8048 RMSE=   5996.5 mem=   2709MB shuffleW=  64.38MB
+  spark   lr x1000 p=8   fit=   7.26s inf=  1.08s R2=0.8048 RMSE=   5996.5 mem=   2724MB shuffleW=  64.44MB
+  spark   lr x1000 p=16  fit=   7.58s inf=  1.01s R2=0.8048 RMSE=   5996.5 mem=   2745MB shuffleW=  64.49MB
+  spark   lr x1000 p=32  fit=   7.95s inf=  1.09s R2=0.8048 RMSE=   5996.5 mem=   2749MB shuffleW=  64.61MB
+  spark   rf x1000 p=2   fit=  28.10s inf=  2.43s R2=0.8708 RMSE=   4878.9 mem=   2750MB shuffleW=  65.19MB
+  spark   rf x1000 p=8   fit=  23.94s inf=  1.95s R2=0.8704 RMSE=   4886.1 mem=   2748MB shuffleW=  67.77MB
+  spark   rf x1000 p=16  fit=  23.91s inf=  1.75s R2=0.8708 RMSE=   4878.0 mem=   1762MB shuffleW=  71.88MB
+  spark   rf x1000 p=32  fit=  26.70s inf=  2.03s R2=0.8706 RMSE=   4881.8 mem=   1760MB shuffleW=  82.51MB
+
+Results written to results/cluster/benchmark_results.csv

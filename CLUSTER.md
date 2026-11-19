@@ -15,6 +15,10 @@ starting a benchmark. This is a real standalone Spark scheduler with separate
 executors, but all containers share one physical computer. Label results
 `docker-single-host`; they do not demonstrate network costs across machines.
 
+From Git Bash on Windows, run `export MSYS_NO_PATHCONV=1` first. Otherwise paths such as
+`/workspace/data/scaled` are rewritten to Windows paths and Spark fails with
+`No FileSystem for scheme "C"`. PowerShell is not affected.
+
 Run a smoke experiment first:
 
 ```powershell
