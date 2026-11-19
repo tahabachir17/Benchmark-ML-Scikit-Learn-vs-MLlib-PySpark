@@ -1,0 +1,19 @@
+{
+  "spark_version":"3.5.3",
+  "master":"local[*]",
+  "execution_mode":"local (single host)",
+  "memory_scope":"driver process tree RSS only; remote executors excluded",
+  "run_label":"single-host",
+  "split_method":"source-grouped 80\/20 before replication, seed 42",
+  "synthetic_scaling":true,
+  "default_parallelism":8,
+  "python":"3.11.9",
+  "sklearn_version":"1.9.1",
+  "sklearn_n_jobs":-1,
+  "cpu":"Intel64 Family 6 Model 142 Stepping 12, GenuineIntel",
+  "logical_cores":8,
+  "ram_gb":15.8,
+  "os":"Windows 10",
+  "repeats":3,
+  "date":"2026-11-19 18:14"
+}

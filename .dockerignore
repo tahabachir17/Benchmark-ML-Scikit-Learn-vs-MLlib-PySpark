@@ -1,0 +1,6 @@
+.git
+.venv
+data/scaled
+results
+*.pdf
+__pycache__

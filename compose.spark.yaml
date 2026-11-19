@@ -1,0 +1,35 @@
+x-spark: &spark
+  image: benchmark-spark:3.5.3
+  build:
+    context: .
+    dockerfile: Dockerfile.spark
+  volumes:
+    - .:/workspace
+  environment:
+    PYSPARK_PYTHON: python3
+    PYSPARK_DRIVER_PYTHON: python3
+    OMP_NUM_THREADS: "4"
+    OPENBLAS_NUM_THREADS: "4"
+    MKL_NUM_THREADS: "4"
+
+services:
+  master:
+    <<: *spark
+    hostname: master
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master --host master
+    ports:
+      - "127.0.0.1:8080:8080"
+  worker-1:
+    <<: *spark
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker --cores 2 --memory 2g spark://master:7077
+    depends_on: [master]
+  worker-2:
+    <<: *spark
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker --cores 2 --memory 2g spark://master:7077
+    depends_on: [master]
+  benchmark:
+    <<: *spark
+    hostname: benchmark
+    profiles: [run]
+    command: python3 benchmark_sklearn_spark.py --master spark://master:7077 --spark-data-root /workspace/data/scaled --driver-memory 2g --sklearn-jobs 4 --repeats 3 --scales 1 10 50 200 500 1000 --output-dir results/cluster --run-label docker-single-host
+    depends_on: [master, worker-1, worker-2]

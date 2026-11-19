@@ -1,0 +1,72 @@
+{
+  "url": "spark://master:7077",
+  "workers": [
+    {
+      "id": "worker-20261119181042-172.19.0.4-45561",
+      "host": "172.19.0.4",
+      "port": 45561,
+      "webuiaddress": "http://172.19.0.4:8081",
+      "cores": 2,
+      "coresused": 2,
+      "coresfree": 0,
+      "memory": 2048,
+      "memoryused": 1024,
+      "memoryfree": 1024,
+      "resources": {},
+      "resourcesused": {},
+      "resourcesfree": {},
+      "state": "ALIVE",
+      "lastheartbeat": 1795112174745
+    },
+    {
+      "id": "worker-20261119181042-172.19.0.3-33771",
+      "host": "172.19.0.3",
+      "port": 33771,
+      "webuiaddress": "http://172.19.0.3:8081",
+      "cores": 2,
+      "coresused": 2,
+      "coresfree": 0,
+      "memory": 2048,
+      "memoryused": 1024,
+      "memoryfree": 1024,
+      "resources": {},
+      "resourcesused": {},
+      "resourcesfree": {},
+      "state": "ALIVE",
+      "lastheartbeat": 1795112174751
+    }
+  ],
+  "aliveworkers": 2,
+  "cores": 4,
+  "coresused": 4,
+  "memory": 4096,
+  "memoryused": 2048,
+  "resources": [
+    {},
+    {}
+  ],
+  "resourcesused": [
+    {},
+    {}
+  ],
+  "activeapps": [
+    {
+      "id": "app-20261119181447-0000",
+      "starttime": 1795112087333,
+      "name": "BenchmarkSklearnSpark",
+      "cores": 4,
+      "user": "root",
+      "memoryperexecutor": 1024,
+      "memoryperslave": 1024,
+      "resourcesperexecutor": [],
+      "resourcesperslave": [],
+      "submitdate": "Thu Nov 19 18:14:47 UTC 2026",
+      "state": "RUNNING",
+      "duration": 92345
+    }
+  ],
+  "completedapps": [],
+  "activedrivers": [],
+  "completeddrivers": [],
+  "status": "ALIVE"
+}
