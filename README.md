@@ -12,6 +12,7 @@ dataset size and the number of Spark partitions.
 | `benchmark_sklearn_spark.py` | Automated benchmark: fit time, inference time, metrics, peak memory and shuffle bytes for partitions 2/8/16/32 at several data scales |
 | `benchmark_report.pdf` | Generated report: summary tables, charts and the crossover analysis |
 | `make_report.py` | Builds the PDF from `results/benchmark_results.csv` |
+| `app.py` | Streamlit demo interface: launches experiments, streams their output, charts the results |
 | `common.py` | Dataset scaling, memory sampler (Python + JVM RSS), SparkSession setup |
 
 ## Setup
@@ -41,8 +42,8 @@ python -m venv .venv
 
 ## Demo interface (for the presentation)
 
-Double-click `lancer_demo.bat`, or run `.venv/Scripts/python demo/server.py`. The page opens at
-http://localhost:8501. It uses the Python standard library only and works offline.
+A Streamlit app (`app.py`). Double-click `lancer_demo.bat`, or run
+`.venv/Scripts/python -m streamlit run app.py`. The page opens at http://localhost:8501 and works offline.
 
 | Button | Duration | Writes to |
 |---|---|---|
