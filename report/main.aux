@@ -1,0 +1,57 @@
+\relax 
+\providecommand \babel@aux [2]{\global \let \babel@toc \@gobbletwo }
+\@nameuse{bbl@beforestart}
+\catcode `:\active 
+\catcode `;\active 
+\catcode `!\active 
+\catcode `?\active 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\babel@aux{french}{}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Notions et outils}{1}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Modèles et métriques}{1}{subsection.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Mono-nœud et calcul distribué}{1}{subsection.2.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Architecture d'une application Spark sur un cluster \emph  {standalone}.}}{2}{figure.caption.1}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:archi}{{1}{2}{Architecture d'une application Spark sur un cluster \emph {standalone}}{figure.caption.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Partitions, shuffle et évaluation paresseuse}{2}{subsection.2.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Principe du shuffle : chaque tâche de la première étape envoie une partie de ses résultats à chaque tâche de l'étape suivante.}}{2}{figure.caption.2}\protected@file@percent }
+\newlabel{fig:shuffle}{{2}{2}{Principe du shuffle : chaque tâche de la première étape envoie une partie de ses résultats à chaque tâche de l'étape suivante}{figure.caption.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Données et pipeline}{2}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Le jeu de données Insurance}{2}{subsection.3.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Premières lignes de \texttt  {insurance.csv}.}}{2}{table.caption.3}\protected@file@percent }
+\newlabel{tab:extrait}{{1}{2}{Premières lignes de \code {insurance.csv}}{table.caption.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Agrandissement sans fuite de données}{3}{subsection.3.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Le découpage précède la réplication : aucune copie ne traverse la frontière train / test.}}{3}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:split}{{3}{3}{Le découpage précède la réplication : aucune copie ne traverse la frontière train / test}{figure.caption.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Le pipeline PySpark ML}{3}{subsection.3.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Les étapes du pipeline PySpark ML.}}{3}{figure.caption.5}\protected@file@percent }
+\newlabel{fig:pipeline}{{4}{3}{Les étapes du pipeline PySpark ML}{figure.caption.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Protocole expérimental}{3}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Mise en place du cluster Spark}{4}{section.5}\protected@file@percent }
+\newlabel{sec:cluster}{{5}{4}{Mise en place du cluster Spark}{section.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Captures des interfaces web de Spark.}}{4}{figure.caption.6}\protected@file@percent }
+\newlabel{fig:screens}{{5}{4}{Captures des interfaces web de Spark}{figure.caption.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Résultats}{4}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Temps d'entraînement et seuil de basculement}{4}{subsection.6.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Temps d'entraînement selon le volume, scikit-learn et Spark \texttt  {local[*]} (échelles logarithmiques).}}{5}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:fit}{{6}{5}{Temps d'entraînement selon le volume, scikit-learn et Spark \code {local[*]} (échelles logarithmiques)}{figure.caption.7}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Temps d'entraînement médians (s). Entre parenthèses : partitions de la meilleure exécution Spark. Rapport = Spark / scikit-learn ; en gras, Spark plus rapide.}}{5}{table.caption.8}\protected@file@percent }
+\newlabel{tab:fit}{{2}{5}{Temps d'entraînement médians (s). Entre parenthèses : partitions de la meilleure exécution Spark. Rapport = Spark / scikit-learn ; en gras, Spark plus rapide}{table.caption.8}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Temps Spark (meilleure configuration) divisé par le temps scikit-learn. Sous la ligne pointillée, Spark est plus rapide.}}{6}{figure.caption.9}\protected@file@percent }
+\newlabel{fig:ratio}{{7}{6}{Temps Spark (meilleure configuration) divisé par le temps scikit-learn. Sous la ligne pointillée, Spark est plus rapide}{figure.caption.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Impact du nombre de partitions}{6}{subsection.6.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Temps d'entraînement selon le nombre de partitions, au volume x1 (haut) et x2000{} (bas).}}{7}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:partitions}{{8}{7}{Temps d'entraînement selon le nombre de partitions, au volume \lin 1 (haut) et \lin \scaleMax {} (bas)}{figure.caption.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Shuffle et mémoire}{7}{subsection.6.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces À gauche : shuffle écrit par exécution (x2000{}). À droite : pic de mémoire de la forêt aléatoire.}}{7}{figure.caption.11}\protected@file@percent }
+\newlabel{fig:shufmem}{{9}{7}{À gauche : shuffle écrit par exécution (\lin \scaleMax {}). À droite : pic de mémoire de la forêt aléatoire}{figure.caption.11}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Qualité des modèles}{7}{subsection.6.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.5}Mode local et cluster}{8}{subsection.6.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Temps d'entraînement en mode local et sur le cluster \emph  {standalone}.}}{8}{figure.caption.12}\protected@file@percent }
+\newlabel{fig:cluster}{{10}{8}{Temps d'entraînement en mode local et sur le cluster \emph {standalone}}{figure.caption.12}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Discussion}{8}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}Conclusion}{9}{section.8}\protected@file@percent }
+\gdef \@abspage@last{11}

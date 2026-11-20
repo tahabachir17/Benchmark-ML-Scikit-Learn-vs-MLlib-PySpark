@@ -39,6 +39,22 @@ python -m venv .venv
 .venv/Scripts/python make_report.py
 ```
 
+## Demo interface (for the presentation)
+
+Double-click `lancer_demo.bat`, or run `.venv/Scripts/python demo/server.py`. The page opens at
+http://localhost:8501. It uses the Python standard library only and works offline.
+
+| Button | Duration | Writes to |
+|---|---|---|
+| Pipeline Spark | about 1 min | nothing (results shown on the page) |
+| Effet des partitions | 2 to 3 min | `results/demo/` |
+| Mini benchmark | about 4 min | `results/demo/` |
+| Benchmark complet | about 1 h | `results/live/` |
+| Cluster: start, mini benchmark, stop | 15 s / about 5 min / 10 s | `results/demo-cluster/` |
+
+The demos never overwrite `results/benchmark_results.csv` or `results/cluster/`. Only one
+experiment runs at a time. The cluster buttons need Docker Desktop to be running.
+
 ## Methodology notes
 
 - A deterministic 80/20 split groups identical original records before replication.

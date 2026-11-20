@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Benchmark scikit-learn vs Spark</title>
+<style>
+  :root {
+    --bg: #f6f7f5; --card: #ffffff; --ink: #1b1d1a; --ink2: #5b5f58; --line: #e1e4de;
+    --green: #1e7b3c; --green-soft: #e8f3eb; --sk: #d95f02; --sp: #1f6fb2; --cl: #1b9e77;
+    --warn: #b45309; --bad: #b91c1c; --mono: ui-monospace, Consolas, "Courier New", monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 "Segoe UI", system-ui, sans-serif; }
+  header { background: #12402a; color: #fff; padding: 18px 28px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  header h1 { margin: 0; font-size: 21px; font-weight: 650; }
+  header .sub { color: #bfe3cb; font-size: 13px; }
+  .pills { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { font-size: 12.5px; padding: 5px 11px; border-radius: 999px; background: rgba(255,255,255,.12); color: #fff; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+  .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: #9aa39d; }
+  .pill.on .dot { background: #4ade80; }
+  main { max-width: 1240px; margin: 0 auto; padding: 22px 24px 60px; }
+  h2 { font-size: 17px; margin: 26px 0 10px; }
+  h2 small { font-weight: 400; color: var(--ink2); font-size: 13px; margin-left: 6px; }
+  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .task h3 { margin: 0 0 2px; font-size: 15px; }
+  .task .dur { font-size: 12.5px; color: var(--green); font-weight: 600; }
+  .task p { margin: 6px 0 12px; color: var(--ink2); font-size: 13.5px; min-height: 58px; }
+  .task.long { border-color: #f3c99a; background: #fffaf3; }
+  .task.long .dur { color: var(--warn); }
+  button { font: inherit; font-size: 14px; border: 0; border-radius: 7px; padding: 8px 14px; cursor: pointer; background: var(--green); color: #fff; font-weight: 600; }
+  button.ghost { background: var(--green-soft); color: var(--green); }
+  button.danger { background: #fde8e8; color: var(--bad); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .console-head { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
+  .state { font-weight: 600; }
+  .state.run { color: var(--sp); } .state.ok { color: var(--green); } .state.err { color: var(--bad); }
+  pre#log { margin: 0; background: #0f1a14; color: #d6efe0; font: 12.5px/1.45 var(--mono); padding: 12px 14px; border-radius: 8px; height: 250px; overflow: auto; white-space: pre-wrap; }
+  .tiles { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); margin: 10px 0 12px; }
+  .tile { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+  .tile .k { font-size: 12.5px; color: var(--ink2); }
+  .tile .v { font-size: 21px; font-weight: 700; margin-top: 2px; white-space: nowrap; }
+  .tile .d { font-size: 12.5px; color: var(--ink2); }
+  .charts { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+  @media (max-width: 900px) { .charts { grid-template-columns: 1fr; } }
+  .chart h3 { margin: 0 0 4px; font-size: 14.5px; }
+  .chart .note { font-size: 12px; color: var(--ink2); margin: 2px 0 6px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12.5px; color: var(--ink2); margin-top: 4px; }
+  .legend i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 5px; border-radius: 2px; }
+  svg text { font: 11px "Segoe UI", system-ui, sans-serif; fill: var(--ink2); }
+  select { font: inherit; padding: 6px 8px; border-radius: 7px; border: 1px solid var(--line); background: #fff; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+  .seg button { background: #fff; color: var(--ink2); border-radius: 0; font-weight: 500; padding: 5px 11px; font-size: 13px; }
+  .seg button.on { background: var(--green-soft); color: var(--green); font-weight: 650; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  th, td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: right; }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--ink2); font-weight: 600; font-size: 12.5px; }
+  td.win { color: var(--green); font-weight: 700; }
+  .empty { color: var(--ink2); padding: 30px; text-align: center; }
+  .hint { font-size: 13px; color: var(--ink2); }
+  .pipe-res { display: none; margin-top: 10px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Benchmark ML : scikit-learn vs PySpark MLlib</h1>
+    <div class="sub">Mini-projet 08 · interface de démonstration</div>
+  </div>
+  <div class="pills">
+    <a class="pill" id="pill-ui" href="http://localhost:4040" target="_blank"><span class="dot"></span>Interface Spark (4040)</a>
+    <a class="pill" id="pill-cluster" href="http://localhost:8080" target="_blank"><span class="dot"></span><span id="cluster-txt">Cluster arrêté</span></a>
+    <a class="pill" href="/rapport.pdf" target="_blank">Rapport PDF</a>
+  </div>
+</header>
+
+<main>
+  <h2>1. Lancer une expérience <small>une seule à la fois ; les démos n'écrasent pas les résultats du benchmark complet</small></h2>
+  <div class="grid" id="tasks"></div>
+
+  <h2>Cluster Spark standalone <small>master + 2 workers sous Docker (Docker Desktop doit être ouvert)</small></h2>
+  <div class="grid" id="cluster-tasks"></div>
+
+  <h2>2. Exécution en cours</h2>
+  <div class="card">
+    <div class="console-head">
+      <span class="state" id="state">Aucune exécution</span>
+      <span class="hint" id="elapsed"></span>
+      <span style="margin-left:auto" class="row">
+        <button class="danger" id="stop" disabled>Arrêter</button>
+      </span>
+    </div>
+    <pre id="log">Choisissez une expérience ci-dessus.</pre>
+    <div class="tiles pipe-res" id="pipe-res"></div>
+  </div>
+
+  <h2>3. Résultats</h2>
+  <div class="row">
+    <select id="dataset"></select>
+    <span class="hint" id="ds-info"></span>
+  </div>
+  <div id="results"></div>
+</main>
+
+<script>
+const TASKS = [
+  {id: "pipeline", name: "Pipeline Spark", dur: "≈ 1 min",
+   desc: "Entraîne la régression linéaire et la forêt aléatoire avec Spark (8 partitions) et affiche RMSE, R² et temps."},
+  {id: "partitions", name: "Effet des partitions", dur: "≈ 2 à 3 min",
+   desc: "Forêt aléatoire avec 2, 8 et 32 partitions, sur 1 070 puis 214 000 lignes, contre scikit-learn."},
+  {id: "mini", name: "Mini benchmark", dur: "≈ 4 min",
+   desc: "Les deux modèles, volumes x1 et x10, 2 et 8 partitions : montre le coût fixe de Spark."},
+  {id: "full", name: "Benchmark complet", dur: "≈ 1 h · à lancer avant", long: true,
+   desc: "Toute la grille, jusqu'à 2,14 millions de lignes (seuil de basculement). Résultats dans « Benchmark relancé »."},
+];
+const CLUSTER_TASKS = [
+  {id: "cluster-up", name: "Démarrer le cluster", dur: "≈ 15 s", desc: "Lance le master et les deux workers. L'interface du master s'ouvre sur le port 8080."},
+  {id: "cluster-mini", name: "Mini benchmark sur le cluster", dur: "≈ 5 min", desc: "Même mini benchmark, exécuté par les deux workers (4 cœurs au total)."},
+  {id: "cluster-down", name: "Arrêter le cluster", dur: "≈ 10 s", desc: "Arrête et supprime les conteneurs du cluster."},
+];
+const COLORS = {sk: "#d95f02", sp: "#1f6fb2", cl: "#1b9e77"};
+const RAMP = {2: "#a6c8ec", 8: "#5f9fdc", 16: "#1f6fb2", 32: "#0d3f6e"};
+const NAME = {lr: "Régression linéaire", rf: "Random Forest"};
+
+const $ = s => document.querySelector(s);
+const fmt = (x, d = 2) => x == null || isNaN(x) ? "–" : x.toLocaleString("fr-FR", {minimumFractionDigits: d, maximumFractionDigits: d});
+const fmtInt = x => Math.round(x).toLocaleString("fr-FR");
+const el = (tag, attrs = {}, html = "") => { const e = document.createElement(tag); for (const k in attrs) e.setAttribute(k, attrs[k]); e.innerHTML = html; return e; };
+
+let running = false, lastTask = null, lastCode = undefined;
+
+function renderTasks() {
+  for (const [list, box] of [[TASKS, "#tasks"], [CLUSTER_TASKS, "#cluster-tasks"]]) {
+    const c = $(box); c.innerHTML = "";
+    for (const t of list) {
+      const card = el("div", {class: "card task" + (t.long ? " long" : "")},
+        `<h3>${t.name}</h3><div class="dur">${t.dur}</div><p>${t.desc}</p>`);
+      const b = el("button", {"data-task": t.id}, t.id === "cluster-up" ? "Démarrer" : t.id === "cluster-down" ? "Arrêter" : "Lancer");
+      if (t.id === "cluster-down") b.className = "ghost";
+      b.onclick = () => run(t.id);
+      card.appendChild(b); c.appendChild(card);
+    }
+  }
+}
+
+async function run(id) {
+  if (id === "full" && !confirm("Le benchmark complet dure environ une heure. Le lancer maintenant ?")) return;
+  const r = await fetch("/api/run/" + id, {method: "POST"});
+  const j = await r.json();
+  if (!j.ok) alert(j.message);
+  poll();
+}
+$("#stop").onclick = async () => { await fetch("/api/stop", {method: "POST"}); poll(); };
+
+function parsePipeline(lines) {
+  const txt = lines.join("\n"), out = [];
+  const re = /\[(LR|RF)\][^\n]*\n\s*RMSE = ([\d.]+)\s+R2 = ([\d.]+)\s+MAE = ([\d.]+)\n\s*fit = ([\d.]+)s\s+inference = ([\d.]+)s/g;
+  let m; while ((m = re.exec(txt))) out.push(m);
+  return out;
+}
+
+async function poll() {
+  let s;
+  try { s = await (await fetch("/api/status")).json(); }
+  catch { $("#state").textContent = "Serveur injoignable : relancez demo/server.py"; $("#state").className = "state err"; setTimeout(poll, 3000); return; }
+  running = s.running;
+  document.querySelectorAll("button[data-task]").forEach(b => b.disabled = running);
+  $("#stop").disabled = !running;
+  const st = $("#state");
+  if (!s.task) { st.textContent = "Aucune exécution"; st.className = "state"; }
+  else if (s.running) { st.textContent = "En cours : " + s.label; st.className = "state run"; }
+  else if (s.stopped) { st.textContent = "Arrêtée : " + s.label; st.className = "state err"; }
+  else if (s.code === 0) { st.textContent = "Terminée : " + s.label; st.className = "state ok"; }
+  else { st.textContent = "Échec : " + s.label + " (code " + s.code + ")"; st.className = "state err"; }
+  if (s.task) {
+    const m = Math.floor(s.elapsed / 60), sec = Math.round(s.elapsed % 60);
+    $("#elapsed").textContent = (m ? m + " min " : "") + sec + " s";
+    const log = $("#log"), atBottom = log.scrollTop + log.clientHeight >= log.scrollHeight - 30;
+    log.textContent = s.lines.join("\n");
+    if (atBottom) log.scrollTop = log.scrollHeight;
+  }
+  // tuiles du pipeline
+  const pr = $("#pipe-res");
+  if (s.task === "pipeline") {
+    const res = parsePipeline(s.lines);
+    pr.style.display = res.length ? "grid" : "none";
+    pr.innerHTML = res.map(m => `<div class="tile"><div class="k">${m[1] === "LR" ? "Régression linéaire" : "Random Forest"}</div>
+      <div class="v">R² ${fmt(+m[3], 3)}</div><div class="d">RMSE ${fmtInt(+m[2])} $ · MAE ${fmtInt(+m[4])} $<br>fit ${fmt(+m[5])} s · prédiction ${fmt(+m[6])} s</div></div>`).join("");
+  } else pr.style.display = "none";
+  // fin d'un benchmark : afficher ses résultats
+  if (!s.running && s.task === lastTask && lastCode === null && s.code === 0 && s.dataset) {
+    await loadDatasets(s.dataset);
+  }
+  lastTask = s.task; lastCode = s.running ? null : s.code;
+  setTimeout(poll, running ? 1000 : 3000);
+}
+
+async function pollEnv() {
+  try {
+    const e = await (await fetch("/api/env")).json();
+    $("#pill-ui").classList.toggle("on", e.sparkUi);
+    $("#pill-cluster").classList.toggle("on", e.cluster.up);
+    $("#cluster-txt").textContent = e.cluster.up ? `Cluster : ${e.cluster.workers} workers, ${e.cluster.cores} cœurs` : "Cluster arrêté";
+  } catch {}
+  setTimeout(pollEnv, 4000);
+}
+
+// ------------------------------------------------------------------ résultats
+let DATA = null, modelTab = "lr", partScale = null;
+
+async function loadDatasets(select) {
+  const list = await (await fetch("/api/datasets")).json();
+  const sel = $("#dataset"), prev = select || sel.value || "local";
+  sel.innerHTML = list.map(d => `<option value="${d.key}" ${d.available ? "" : "disabled"}>${d.label}${d.available ? "" : " (pas encore lancé)"}</option>`).join("");
+  sel.value = list.find(d => d.key === prev && d.available) ? prev : (list.find(d => d.available) || {}).key;
+  await loadResults();
+}
+$("#dataset").onchange = () => { partScale = null; loadResults(); };
+
+async function loadResults() {
+  const key = $("#dataset").value; if (!key) return;
+  DATA = await (await fetch("/api/results/" + key)).json();
+  const env = DATA.env || {};
+  $("#ds-info").textContent = DATA.available ?
+    `mis à jour le ${DATA.modified} · Spark ${env.spark_version || "?"}, ${env.master || ""} · ${env.repeats || "?"} répétition(s)` : "";
+  renderResults();
+}
+
+const rowsOf = (m, fw) => DATA.rows.filter(r => r.model === m && r.framework === fw);
+const scales = () => [...new Set(DATA.rows.map(r => r.scale))].sort((a, b) => a - b);
+const parts = () => [...new Set(DATA.rows.filter(r => r.framework === "spark").map(r => r.partitions))].sort((a, b) => a - b);
+const skAt = (m, s) => DATA.rows.find(r => r.model === m && r.framework === "sklearn" && r.scale === s);
+const bestAt = (m, s, col = "fit_time_s") => DATA.rows.filter(r => r.model === m && r.framework === "spark" && r.scale === s)
+  .reduce((a, b) => (!a || b[col] < a[col] ? b : a), null);
+
+function renderResults() {
+  const box = $("#results"); box.innerHTML = "";
+  if (!DATA || !DATA.available) { box.innerHTML = '<div class="card empty">Pas encore de résultats pour ce jeu.</div>'; return; }
+  const S = scales(), models = ["lr", "rf"].filter(m => DATA.rows.some(r => r.model === m)), smax = S[S.length - 1];
+  // tuiles
+  const tiles = el("div", {class: "tiles"});
+  for (const m of models) {
+    const win = S.find(s => { const a = skAt(m, s), b = bestAt(m, s); return a && b && b.fit_time_s < a.fit_time_s; });
+    const a = skAt(m, smax), b = bestAt(m, smax);
+    const ratio = b.fit_time_s / a.fit_time_s;
+    tiles.appendChild(el("div", {class: "tile"}, `<div class="k">${NAME[m]} : seuil de basculement</div>
+      <div class="v">${win ? "x" + win : "non atteint"}</div>
+      <div class="d">${win ? "≈ " + fmtInt(skAt(m, win).n_train) + " lignes d'entraînement" : "jusqu'à x" + smax + " (" + fmtInt(a.n_train) + " lignes)"}</div>`));
+    tiles.appendChild(el("div", {class: "tile"}, `<div class="k">${NAME[m]} à x${smax}</div>
+      <div class="v" style="color:${ratio < 1 ? "var(--green)" : "var(--ink)"}">${ratio < 1 ? fmt(1 / ratio) + "× plus rapide" : fmt(ratio) + "× plus lent"}</div>
+      <div class="d">Spark ${fmt(b.fit_time_s)} s (${b.partitions} part.) contre scikit-learn ${fmt(a.fit_time_s)} s</div>`));
+  }
+  box.appendChild(tiles);
+
+  // graphiques
+  const charts = el("div", {class: "charts"});
+  // 1. temps vs volume
+  const c1 = el("div", {class: "card chart"});
+  c1.innerHTML = `<div class="row" style="justify-content:space-between"><h3>Temps d'entraînement selon le volume</h3>
+    <span class="seg">${models.map(m => `<button data-m="${m}" class="${m === modelTab ? "on" : ""}">${NAME[m]}</button>`).join("")}</span></div>
+    <div class="note">Échelles logarithmiques. Survolez un point pour sa valeur.</div>`;
+  c1.querySelectorAll(".seg button").forEach(b => b.onclick = () => { modelTab = b.dataset.m; renderResults(); });
+  const P = parts();
+  const series1 = [{name: "scikit-learn", color: COLORS.sk, w: 2.6, pts: rowsOf(modelTab, "sklearn").map(r => [r.n_train, r.fit_time_s])}]
+    .concat(P.map(p => ({name: `Spark, ${p} partitions`, color: RAMP[p] || COLORS.sp, w: 1.7,
+      pts: rowsOf(modelTab, "spark").filter(r => r.partitions === p).map(r => [r.n_train, r.fit_time_s])})));
+  c1.appendChild(lineChart(series1, {logX: true, logY: true, yUnit: " s"}));
+  c1.appendChild(legend(series1));
+  charts.appendChild(c1);
+
+  // 2. rapport
+  const c2 = el("div", {class: "card chart"});
+  c2.innerHTML = `<h3>Rapport temps Spark / temps scikit-learn</h3><div class="note">Sous la ligne pointillée, Spark est plus rapide. Meilleur nombre de partitions à chaque volume.</div>`;
+  const series2 = models.map(m => ({name: NAME[m], color: m === "lr" ? COLORS.sp : COLORS.cl, w: 2.4,
+    pts: S.map(s => [skAt(m, s).n_train, bestAt(m, s).fit_time_s / skAt(m, s).fit_time_s])}));
+  c2.appendChild(lineChart(series2, {logX: true, logY: true, ref: 1, yUnit: "×"}));
+  c2.appendChild(legend(series2.concat([{name: "égalité", color: "#9a9a96", dash: true}])));
+  charts.appendChild(c2);
+
+  // 3. partitions
+  if (partScale == null || !S.includes(partScale)) partScale = smax;
+  const c3 = el("div", {class: "card chart"});
+  c3.innerHTML = `<div class="row" style="justify-content:space-between"><h3>Effet du nombre de partitions</h3>
+    <select id="pscale">${S.map(s => `<option value="${s}" ${s === partScale ? "selected" : ""}>x${s} (${fmtInt(skAt(models[0], s).n_train)} lignes)</option>`).join("")}</select></div>
+    <div class="note">Barres : Spark. Trait orange : scikit-learn au même volume.</div>`;
+  c3.querySelector("#pscale").onchange = e => { partScale = +e.target.value; renderResults(); };
+  const wrap = el("div", {style: "display:grid;grid-template-columns:repeat(" + models.length + ",1fr);gap:8px"});
+  for (const m of models) {
+    const d = el("div"); d.appendChild(el("div", {class: "hint", style: "text-align:center"}, NAME[m]));
+    const bars = DATA.rows.filter(r => r.model === m && r.framework === "spark" && r.scale === partScale).sort((a, b) => a.partitions - b.partitions);
+    d.appendChild(barChart(bars.map(r => ({label: r.partitions + " part.", v: r.fit_time_s, color: RAMP[r.partitions] || COLORS.sp})), skAt(m, partScale).fit_time_s));
+    wrap.appendChild(d);
+  }
+  c3.appendChild(wrap);
+  charts.appendChild(c3);
+
+  // 4. tableau
+  const c4 = el("div", {class: "card chart"});
+  c4.innerHTML = `<h3>Valeurs mesurées</h3><div class="note">Temps d'entraînement médians (s), meilleure configuration Spark. En vert : Spark plus rapide.</div>`;
+  let t = `<table><tr><th>Volume</th><th>Lignes</th>${models.map(m => `<th>sklearn ${m.toUpperCase()}</th><th>Spark ${m.toUpperCase()}</th>`).join("")}${models.map(m => `<th>R² ${m.toUpperCase()}<br><span style="font-weight:400">sklearn / Spark</span></th>`).join("")}</tr>`;
+  for (const s of S) {
+    t += `<tr><td>x${s}</td><td>${fmtInt(skAt(models[0], s).n_train)}</td>`;
+    for (const m of models) { const a = skAt(m, s), b = bestAt(m, s);
+      t += `<td>${fmt(a.fit_time_s, 3)}</td><td style="white-space:nowrap" class="${b.fit_time_s < a.fit_time_s ? "win" : ""}">${fmt(b.fit_time_s)} (${b.partitions})</td>`; }
+    t += models.map(m => `<td style="white-space:nowrap">${fmt(skAt(m, s).r2, 3)} / ${fmt(bestAt(m, s).r2, 3)}</td>`).join("") + "</tr>";
+  }
+  c4.insertAdjacentHTML("beforeend", t + "</table>");
+  charts.appendChild(c4);
+  box.appendChild(charts);
+}
+
+// ------------------------------------------------------------------ graphiques SVG
+const NS = "http://www.w3.org/2000/svg";
+const svgEl = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+
+function legend(series) {
+  const d = el("div", {class: "legend"});
+  d.innerHTML = series.map(s => `<span><i style="background:${s.color};${s.dash ? "background:repeating-linear-gradient(90deg," + s.color + " 0 4px,transparent 4px 7px)" : ""}"></i>${s.name}</span>`).join("");
+  return d;
+}
+
+function lineChart(series, o) {
+  const W = 540, H = 260, m = {l: 52, r: 14, t: 10, b: 30};
+  const all = series.flatMap(s => s.pts).filter(p => p[1] > 0);
+  let ys = all.map(p => p[1]); if (o.ref) ys.push(o.ref);
+  const xs = all.map(p => p[0]);
+  const lx = v => o.logX ? Math.log10(v) : v, ly = v => o.logY ? Math.log10(v) : v;
+  let x0 = lx(Math.min(...xs)), x1 = lx(Math.max(...xs)), y0 = ly(Math.min(...ys)), y1 = ly(Math.max(...ys));
+  const py = (y1 - y0) * 0.08 || 1; y0 -= py; y1 += py; const px = (x1 - x0) * 0.04 || 1; x0 -= px; x1 += px;
+  const X = v => m.l + (lx(v) - x0) / (x1 - x0) * (W - m.l - m.r), Y = v => H - m.b - (ly(v) - y0) / (y1 - y0) * (H - m.t - m.b);
+  const svg = svgEl("svg", {viewBox: `0 0 ${W} ${H}`, width: "100%"});
+  const ticks = (a, b, log) => { const out = []; if (log) { for (let e = Math.ceil(a); e <= Math.floor(b); e++) out.push(10 ** e); } else { const st = (b - a) / 5; for (let i = 0; i <= 5; i++) out.push(a + i * st); } return out; };
+  for (const v of ticks(y0, y1, o.logY)) {
+    svg.appendChild(svgEl("line", {x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), stroke: "#eceee9"}));
+    const t = svgEl("text", {x: m.l - 6, y: Y(v) + 4, "text-anchor": "end"}); t.textContent = v >= 1 ? fmtInt(v) : String(v).replace(".", ","); svg.appendChild(t);
+  }
+  for (const v of ticks(x0, x1, o.logX)) {
+    const t = svgEl("text", {x: X(v), y: H - 10, "text-anchor": "middle"}); t.textContent = v >= 1e6 ? (v / 1e6) + " M" : v >= 1e3 ? (v / 1e3) + " k" : v; svg.appendChild(t);
+  }
+  const xl = svgEl("text", {x: W - m.r, y: H - 10, "text-anchor": "end"}); xl.textContent = "lignes"; svg.appendChild(xl);
+  if (o.ref) svg.appendChild(svgEl("line", {x1: m.l, x2: W - m.r, y1: Y(o.ref), y2: Y(o.ref), stroke: "#9a9a96", "stroke-dasharray": "5 4"}));
+  for (const s of series) {
+    const pts = s.pts.filter(p => p[1] > 0).sort((a, b) => a[0] - b[0]); if (!pts.length) continue;
+    svg.appendChild(svgEl("polyline", {points: pts.map(p => X(p[0]) + "," + Y(p[1])).join(" "), fill: "none", stroke: s.color, "stroke-width": s.w || 2, "stroke-linejoin": "round"}));
+    for (const p of pts) {
+      const c = svgEl("circle", {cx: X(p[0]), cy: Y(p[1]), r: 4, fill: s.color, stroke: "#fff", "stroke-width": 1.5});
+      const tt = svgEl("title", {}); tt.textContent = `${s.name}\n${fmtInt(p[0])} lignes : ${fmt(p[1], p[1] < 1 ? 3 : 2)}${o.yUnit || ""}`; c.appendChild(tt);
+      svg.appendChild(c);
+    }
+  }
+  return svg;
+}
+
+function barChart(bars, ref) {
+  const W = 260, H = 220, m = {l: 34, r: 8, t: 18, b: 24};
+  const max = Math.max(ref || 0, ...bars.map(b => b.v)) * 1.15;
+  const Y = v => H - m.b - v / max * (H - m.t - m.b), bw = (W - m.l - m.r) / bars.length;
+  const svg = svgEl("svg", {viewBox: `0 0 ${W} ${H}`, width: "100%"});
+  for (let i = 0; i <= 4; i++) { const v = max * i / 4;
+    svg.appendChild(svgEl("line", {x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), stroke: "#eceee9"}));
+    const t = svgEl("text", {x: m.l - 5, y: Y(v) + 4, "text-anchor": "end"}); t.textContent = v >= 10 ? Math.round(v) : fmt(v, 1); svg.appendChild(t); }
+  const best = Math.min(...bars.map(b => b.v));
+  bars.forEach((b, i) => {
+    const x = m.l + i * bw + bw * 0.18, w = bw * 0.64;
+    const r = svgEl("rect", {x, y: Y(b.v), width: w, height: H - m.b - Y(b.v), rx: 3, fill: b.v === best ? "#1e7b3c" : b.color});
+    const tt = svgEl("title", {}); tt.textContent = `${b.label} : ${fmt(b.v)} s`; r.appendChild(tt); svg.appendChild(r);
+    const lv = svgEl("text", {x: x + w / 2, y: Y(b.v) - 4, "text-anchor": "middle"}); lv.textContent = fmt(b.v, 1); svg.appendChild(lv);
+    const lb = svgEl("text", {x: x + w / 2, y: H - 8, "text-anchor": "middle"}); lb.textContent = b.label; svg.appendChild(lb);
+  });
+  if (ref) { svg.appendChild(svgEl("line", {x1: m.l, x2: W - m.r, y1: Y(ref), y2: Y(ref), stroke: COLORS.sk, "stroke-width": 2, "stroke-dasharray": "6 4"})); }
+  return svg;
+}
+
+renderTasks(); poll(); pollEnv(); loadDatasets();
+</script>
+</body>
+</html>

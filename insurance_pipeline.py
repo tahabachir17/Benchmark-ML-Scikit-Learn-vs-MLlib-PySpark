@@ -139,12 +139,17 @@ def main():
     ap.add_argument("--partitions", type=int, default=8)
     ap.add_argument("--scale", type=int, default=1, help="dataset replication factor")
     ap.add_argument("--master", default="local[*]")
+    ap.add_argument("--warmup", action="store_true",
+                    help="discarded first run, so the JVM start-up is not counted in the timings")
     args = ap.parse_args()
 
     spark = get_spark("InsurancePipeline", master=args.master)
     csv = scaled_csv(args.scale)
     models = ["lr", "rf"] if args.model == "both" else [args.model]
     try:
+        if args.warmup:
+            print("Échauffement de la JVM (exécution non comptée)...", flush=True)
+            run_spark(spark, csv, "lr", args.partitions)
         for m in models:
             r = run_spark(spark, csv, m, args.partitions)
             print(f"\n[{m.upper()}] rows train/test = {r['n_train']}/{r['n_test']}, "
